@@ -9,6 +9,7 @@
 #include <tensorflow/cc/ops/standard_ops.h>
 #include <tensorflow/core/framework/tensor.h>
 #include <tensorflow/core/public/session.h>
+#include <boost/asio.hpp>
 #include "ofMain.h"
 #include "ofxDatGui.h"
 
@@ -16,17 +17,18 @@ namespace tf = tensorflow;
 
 class ImageGeneratorApp : public ofBaseApp {
    public:
-    ImageGeneratorApp();
-    ~ImageGeneratorApp();
+    ImageGeneratorApp() {}
+    ~ImageGeneratorApp() {
+        if (process) process->join();
+    }
 
     void setup();
     void update();
     void draw();
-    void generateImage();
-    void readImage(int);
 
    private:
     std::unique_ptr<ofxDatGui> gui;
     std::unique_ptr<ofImage> image;
-    std::unique_ptr<std::thread> image_generator;
+    std::unique_ptr<std::thread> process;
+    boost::asio::io_service glService;
 };
