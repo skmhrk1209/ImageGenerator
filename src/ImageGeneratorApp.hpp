@@ -27,11 +27,13 @@ class ImageGeneratorApp : public ofBaseApp {
     void draw();
 
    private:
-    std::unique_ptr<ofxDatGui> gui;
+    std::unordered_map<std::string, std::pair<tf::GraphDef, tf::GraphDef>> graphs;
+    std::unique_ptr<ofxDatGui> globalGui;
+    ofxDatGuiDropdown* dropdown;
     ofxDatGuiToggle* toggle;
+    std::unique_ptr<ofxDatGui> localGui;
     ofxDatGuiSlider* slider;
     std::unique_ptr<std::thread> process;
     std::vector<ofFloatImage> images;
     boost::asio::io_service glService;
-    ofTrueTypeFont font;
 };
