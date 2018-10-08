@@ -1,2 +1,2 @@
-bin/* linguist-vendored
-*.make linguist-vendored
+*.make linguist-generated=true
+*.d linguist-generated=true
