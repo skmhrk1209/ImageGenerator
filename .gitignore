@@ -1,5 +1,7 @@
 .DS_Store
 .vscode/
+bin/
+obj/
 celeba_pggan_model/
 model_1_celebahq128_resnet19/
 model_2_celebahq128_resnet19/
