@@ -28,7 +28,10 @@ class ImageGeneratorApp : public ofBaseApp {
 
    private:
     std::unique_ptr<ofxDatGui> gui;
-    std::unique_ptr<ofImage> image;
+    ofxDatGuiToggle* toggle;
+    ofxDatGuiSlider* slider;
     std::unique_ptr<std::thread> process;
+    std::vector<ofFloatImage> images;
     boost::asio::io_service glService;
+    ofTrueTypeFont font;
 };

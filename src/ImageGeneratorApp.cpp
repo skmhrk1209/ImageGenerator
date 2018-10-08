@@ -1,6 +1,7 @@
 #include "ImageGeneratorApp.hpp"
 
 const auto proj_dir = "/Users/hirokisakuma/documents/openFrameworks_v0.9.8/apps/myapps/ImageGenerator/";
+const auto latent_size = 128;
 const auto batch_size = 64;
 
 auto concat = [](const auto&... args) {
@@ -11,7 +12,11 @@ auto concat = [](const auto&... args) {
 
 void ImageGeneratorApp::setup() {
     gui = std::make_unique<ofxDatGui>(128, 384);
-    gui->addToggle("generate")->onToggleEvent([=](const ofxDatGuiToggleEvent& event) {
+    gui->setWidth(256);
+
+    toggle = gui->addToggle("generate");
+    toggle->setStripeVisible(false);
+    toggle->onToggleEvent([=](const ofxDatGuiToggleEvent& event) {
         if (process) process->join();
         process = std::make_unique<std::thread>([=]() {
             event.target->setEnabled(false);
@@ -21,8 +26,8 @@ void ImageGeneratorApp::setup() {
                 auto scope = tf::Scope::NewRootScope();
                 auto session = std::unique_ptr<tf::Session>(tf::NewSession(tf::SessionOptions()));
 
-                auto random_normal_begin = tf::ops::RandomNormal(scope, {128}, tf::DT_FLOAT);
-                auto random_normal_end = tf::ops::RandomNormal(scope, {128}, tf::DT_FLOAT);
+                auto random_normal_begin = tf::ops::RandomNormal(scope, {latent_size}, tf::DT_FLOAT);
+                auto random_normal_end = tf::ops::RandomNormal(scope, {latent_size}, tf::DT_FLOAT);
 
                 std::vector<tf::Output> random_normals;
 
@@ -57,6 +62,16 @@ void ImageGeneratorApp::setup() {
                                          {"celeba_dcgan_model/fakes"}, {}, &outputs));
             }
 
+            glService.post([=]() {
+                images.clear();
+                for (auto i = 0; i < outputs[0].dim_size(0); ++i) {
+                    auto data = outputs[0].SubSlice(i).tensor<float, 3>().data();
+                    images.emplace_back();
+                    images.back().setFromPixels(data, 128, 128, OF_IMAGE_COLOR);
+                }
+            });
+
+            /*
             for (auto i = 0; i < outputs[0].dim_size(0); ++i) {
                 auto scope = tf::Scope::NewRootScope();
                 auto session = std::unique_ptr<tf::Session>(tf::NewSession(tf::SessionOptions()));
@@ -73,22 +88,19 @@ void ImageGeneratorApp::setup() {
                 session->Create(graph);
                 TF_CHECK_OK(session->Run({}, {}, {"write_file"}, {}));
             }
-
-            glService.post([=]() {
-                image = std::make_unique<ofImage>(
-                    concat(proj_dir, "bin/data/", static_cast<int>(batch_size * gui->getSlider("interpolation")->getValue()) % batch_size, ".png"));
-            });
+            */
 
             event.target->setChecked(false);
             event.target->setEnabled(true);
         });
     });
-    gui->addSlider("interpolation", 0.0, 1.0)->onSliderEvent([=](const ofxDatGuiSliderEvent& event) {
-        image = std::make_unique<ofImage>(concat(proj_dir, "bin/data/", static_cast<int>(batch_size * event.value) % batch_size, ".png"));
-    });
-    gui->setWidth(256);
+
+    slider = gui->addSlider("interpolation", 0.0, 1.0);
+    slider->setStripeVisible(false);
 
     ofBackground(20);
+
+    font.load("Verdana", 8);
 }
 
 void ImageGeneratorApp::update() {
@@ -97,5 +109,16 @@ void ImageGeneratorApp::update() {
 }
 
 void ImageGeneratorApp::draw() {
-    if (image) image->draw(128, 128, 256, 256);
+    ofSetColor(255);
+    ofNoFill();
+    
+    font.drawString("Progressive Growing of GANs", 20, 20);
+    font.drawString("Celeb Image Generator", 20, 40);
+
+    if (!images.empty()) {
+        int index = (batch_size - 1) * gui->getSlider("interpolation")->getValue();
+        images[index].draw(128, 128, 256, 256);
+    }
+
+    ofDrawRectangle(128, 128, 256, 256);
 }
