@@ -1,1 +1,2 @@
 bin/* linguist-vendored
+*.make linguist-vendored
