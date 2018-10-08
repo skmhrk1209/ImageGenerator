@@ -1,3 +1,1 @@
-bin/* linguist-generated=true
-*.make linguist-generated=true
-*.d linguist-generated=true
+./*.make linguist-vendored
