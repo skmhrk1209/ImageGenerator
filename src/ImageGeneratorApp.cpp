@@ -14,7 +14,7 @@ void ImageGeneratorApp::setup() {
     globalGui = std::make_unique<ofxDatGui>(ofxDatGuiAnchor::TOP_LEFT);
     globalGui->setWidth(200);
 
-    dropdown = globalGui->addDropdown("models", {"celeba_pggan_model", "model_1_celebahq128_resnet19", "model_2_celebahq128_resnet19",
+    dropdown = globalGui->addDropdown("models", {"celeba_dcgan_model", "model_1_celebahq128_resnet19", "model_2_celebahq128_resnet19",
                                                  "model_5_celebahq128_resnet19", "model_6_celebahq128_resnet19", "model_9_celebahq128_resnet19"});
     dropdown->setStripeVisible(false);
     for (auto i = 0; i < dropdown->size(); ++i) {

@@ -39,8 +39,6 @@
 ################################################################################
 # PROJECT_EXTERNAL_SOURCE_PATHS = 
 
-PROJECT_EXTERNAL_SOURCE_PATHS += /usr/local/include/tensorflow
-
 ################################################################################
 # PROJECT EXCLUSIONS
 #   These makefiles assume that all folders in your current project directory 
@@ -80,9 +78,6 @@ PROJECT_EXTERNAL_SOURCE_PATHS += /usr/local/include/tensorflow
 # incorporated directly into the final executable application binary.
 # TODO: should this be a default setting?
 # PROJECT_LDFLAGS=-Wl,-rpath=./libs
-
-PROJECT_LDFLAGS += -ltensorflow_cc
-PROJECT_LDFLAGS += -ltensorflow_framework
 
 ################################################################################
 # PROJECT DEFINES
