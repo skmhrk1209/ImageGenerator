@@ -1,1 +1,5 @@
+bin/
 .DS_Store
+ImageGenerator.xcodeproj
+Project.xcconfig
+openFrameworks-Info.plist
